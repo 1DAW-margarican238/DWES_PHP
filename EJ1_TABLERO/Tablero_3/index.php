@@ -13,10 +13,6 @@ function dump($var){
 
 
 
-$ponerPersonaje =rand(0,143);
-
-
-$_
 
 //Función lógica presentación
 function getTableroMArkup ($tablero, $ponerPersonaje){
@@ -37,6 +33,20 @@ function getTableroMArkup ($tablero, $ponerPersonaje){
     return $output;
 }
 
+
+   $ponerPersonaje = null;
+
+if((isset($_GET ['fila']) && isset($_GET ['col']))&&(($_GET ['fila']) <13  && ($_GET ['col'])<13)&&(($_GET ['fila']) >0  && ($_GET ['col'])>0)){
+    $fila = $_GET ['fila'];
+    $col = $_GET ['col'];
+    $ponerPersonaje = (($fila*12-12) + ($col));
+}
+
+function posicionInvalida($ponerPersonaje){
+    if(!isset($ponerPersonaje)){
+        echo '<p>La posición es nula, menor que 1 o mayor que 12.</p>';
+    }
+}
 
 //Lógica de negocio
 //El tablero es un array bidimensional en el que cada fila contiene 12 palabras cuyos valores pueden ser:
@@ -109,7 +119,9 @@ $tableroMarkup = getTableroMArkup($tablero, $ponerPersonaje);
         background-position: 0px 0px;
         }
 
-
+        .mensaje{
+        font-weight: bold;
+        }
 
     </style>
 </head>
@@ -118,5 +130,12 @@ $tableroMarkup = getTableroMArkup($tablero, $ponerPersonaje);
     <div class="contenedorTablero">
         <?php echo $tableroMarkup; ?>
     </div>
+    <div class="mensaje">
+    <?php
+        echo posicionInvalida($ponerPersonaje);
+    ?>
+    </div>
+
+   
 </body>
 </html>
