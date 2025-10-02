@@ -54,6 +54,9 @@ function leerInput(){
             'col' => $col
         ) : null;    
 }
+
+
+
 //*****Lógica de negocio***********
 //Extracción de las variables de la petición
 
@@ -64,6 +67,10 @@ dump('$posPersonaje');
 dump($posPersonaje);
 $tablero = leerArchivoCSV('./contenido_tablero/contenido.csv');
 
+$mensaje = '';
+if ($posPersonaje === null) {
+    $mensaje = 'No se ha introducido posicion para el personaje';
+}
 
 
 //*****+++Lógica de presentación*******
@@ -122,8 +129,12 @@ $tableroMarkup = getTableroMarkup($tablero, $posPersonaje);
 </head>
 <body>
     <h1>Tablero juego super rol DWES</h1>
+    
+   
+     <p><?php echo $mensaje; ?></p>
     <div class="contenedorTablero">
         <?php echo $tableroMarkup; ?>
     </div>
+     
 </body>
 </html>
