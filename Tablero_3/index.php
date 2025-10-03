@@ -149,16 +149,6 @@ $mensajesUsuarioMarkup = getMensajesMarkup($mensajes);
         
 
 
-    
-        button{
-            width:60px;
-            height:60px;
-            background-color: grey;
-            border-color: grey;
-           
-
-        }
-
     </style>
 </head>
 <body>
