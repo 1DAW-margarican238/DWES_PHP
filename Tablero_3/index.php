@@ -26,6 +26,20 @@ function getTableroMarkup ($tablero, $posPersonaje){
     }
     return $output;
 }
+
+
+function getMensajesMarkup($arrayMensajes){
+    $output = '';
+    foreach ($arrayMensajes as $mensaje){
+        $output .= '<p>'.$mensaje.'</p>';
+    }
+    return $output;
+    
+}
+
+
+
+
 //******+Función Lógica de negocio************
 //El tablero es un array bidimensional en el que cada fila contiene 12 palabras cuyos valores pueden ser:
 // agua
@@ -49,11 +63,20 @@ function leerInput(){
     $col = filter_input(INPUT_GET, 'col', FILTER_VALIDATE_INT);
     $row = filter_input(INPUT_GET, 'row', FILTER_VALIDATE_INT);
 
-    return (isset($col) && isset($row) && is_numeric($col) && is_numeric($row))? array(
+    return (isset($col) && isset($row) && is_int($col) && is_int($row))? array(
             'row' => $row,
             'col' => $col
         ) : null;    
 }
+
+function getMensajes($posPersonaje){
+    if(!isset($posPersonaje)){
+        return array('La posición del personaje no está bien definida');
+    }
+    return array('');
+
+}
+
 
 
 
@@ -66,16 +89,14 @@ $posPersonaje = leerInput();
 dump('$posPersonaje');
 dump($posPersonaje);
 $tablero = leerArchivoCSV('./contenido_tablero/contenido.csv');
+$mensajes =  getMensajes($posPersonaje);
 
-$mensaje = '';
-if ($posPersonaje === null) {
-    $mensaje = 'No se ha introducido posicion para el personaje';
-}
+
 
 
 //*****+++Lógica de presentación*******
 $tableroMarkup = getTableroMarkup($tablero, $posPersonaje);
-
+$mensajesUsuarioMarkup = getMensajesMarkup($mensajes);
 
 ?>
 <!DOCTYPE html>
@@ -125,13 +146,27 @@ $tableroMarkup = getTableroMarkup($tablero, $posPersonaje);
             background-color: green;
             background-position: 0px 0px;
         }
+        
+
+
+    
+        button{
+            width:60px;
+            height:60px;
+            background-color: grey;
+            border-color: grey;
+           
+
+        }
+
     </style>
 </head>
 <body>
     <h1>Tablero juego super rol DWES</h1>
+ 
     
-   
-     <p><?php echo $mensaje; ?></p>
+   <div class="mesajesContainer"><?php echo $mensajesUsuarioMarkup; ?></div>
+ 
     <div class="contenedorTablero">
         <?php echo $tableroMarkup; ?>
     </div>
