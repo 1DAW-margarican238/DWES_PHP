@@ -28,16 +28,6 @@ function getTableroMarkup ($tablero, $posPersonaje){
 }
 
 
-function getMensajesMarkup($arrayMensajes){
-    $output = '';
-    foreach ($arrayMensajes as $mensaje){
-        $output .= '<p>'.$mensaje.'</p>';
-    }
-    return $output;
-    
-}
-
-
 
 
 //******+Función Lógica de negocio************
@@ -69,13 +59,57 @@ function leerInput(){
         ) : null;    
 }
 
-function getMensajes($posPersonaje){
-    if(!isset($posPersonaje)){
-        return array('La posición del personaje no está bien definida');
-    }
-    return array('');
 
+
+
+function getArrowsMarkup($arrows){
+    if(!$arrows) return '';
+    $output = '';
+    foreach($arrows as $sentido => $pos){
+        $output .= '<a href="./index.php?col='.$pos['col'].'&row='.$pos['row'].'">'.$sentido.'</a> ';
+    }
+    return $output;
 }
+
+
+
+
+
+function getArrows($posPersonaje){
+    if(!isset($posPersonaje)) return null;
+    $arrows = [];
+    if($posPersonaje['col'] > 0) {
+        $arrows['izquierda'] = [
+            'row' => $posPersonaje['row'],
+            'col' => $posPersonaje['col'] - 1
+        ];
+    }
+
+    if($posPersonaje['col'] < 11) {
+        $arrows['derecha'] = [
+            'row' => $posPersonaje['row'],
+            'col' => $posPersonaje['col'] + 1
+        ];
+    }
+
+    if($posPersonaje['row'] > 0) {
+        $arrows['arriba'] = [
+            'row' => $posPersonaje['row'] - 1,
+            'col' => $posPersonaje['col']
+        ];
+    }
+
+    if($posPersonaje['row'] < 11) {
+        $arrows['abajo'] = [
+            'row' => $posPersonaje['row'] + 1,
+            'col' => $posPersonaje['col']
+        ];
+    }
+
+    return $arrows;
+}
+
+
 
 
 
@@ -85,18 +119,24 @@ function getMensajes($posPersonaje){
 
 
 $posPersonaje = leerInput();
+$arrows = getArrows($posPersonaje);
+
+
 
 dump('$posPersonaje');
 dump($posPersonaje);
 $tablero = leerArchivoCSV('./contenido_tablero/contenido.csv');
-$mensajes =  getMensajes($posPersonaje);
 
-
+$mensaje = '';
+if ($posPersonaje === null) {
+    $mensaje = 'No se ha introducido posicion para el personaje';
+}
 
 
 //*****+++Lógica de presentación*******
 $tableroMarkup = getTableroMarkup($tablero, $posPersonaje);
-$mensajesUsuarioMarkup = getMensajesMarkup($mensajes);
+$arrowsMarkup = getArrowsMarkup($arrows);
+
 
 ?>
 <!DOCTYPE html>
@@ -148,14 +188,20 @@ $mensajesUsuarioMarkup = getMensajesMarkup($mensajes);
         }
         
 
-
     </style>
 </head>
 <body>
     <h1>Tablero juego super rol DWES</h1>
- 
+   
+        <div class="arrowsContainer">
+            <?php echo $arrowsMarkup; ?>
+        </div>
+
+
     
-   <div class="mesajesContainer"><?php echo $mensajesUsuarioMarkup; ?></div>
+
+    <p><?php echo $mensaje; ?></p>
+    </div>
  
     <div class="contenedorTablero">
         <?php echo $tableroMarkup; ?>
