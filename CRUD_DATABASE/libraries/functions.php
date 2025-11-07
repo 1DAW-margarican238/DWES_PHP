@@ -40,20 +40,14 @@ function getDataFromCSV($ruta){
     }
     
 }
-// function putDataInCSV($data, $ruta){
-//     if($handler = fopen($ruta, 'a')){
-//         return fputcsv($handler,$data);
-//     }else{
-//         return null;
-//     }
-// }
 
 function putDataInCSV($data, $ruta){
     if($handler = fopen($ruta, 'a')){
-        foreach($data as $filas){
-             return fputcsv($handler,$data);
+        foreach($data as $filaInedx=> $filaData){
+            dump()
+             $resultaado = fputcsv($handler,$filaData);
         }
-       
+       return $resultaado;
     }else{
         return null;
     }
