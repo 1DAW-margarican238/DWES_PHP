@@ -40,7 +40,6 @@ function getDataFromCSV($ruta){
     }
     
 }
-
 // function putDataInCSV($data, $ruta){
 //     if($handler = fopen($ruta, 'a')){
 //         return fputcsv($handler,$data);
@@ -51,13 +50,11 @@ function getDataFromCSV($ruta){
 
 function putDataInCSV($data, $ruta){
     if($handler = fopen($ruta, 'a')){
-        foreach($datos as $fila){
-            return fputcsv($handler,$data);
+        foreach($data as $filas){
+             return fputcsv($handler,$data);
         }
-        
+       
     }else{
         return null;
     }
 }
-
-
