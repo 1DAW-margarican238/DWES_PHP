@@ -27,28 +27,107 @@ function clearFileContent($ruta){
     fclose($fhandler);
 }
 
-function getDataFromCSV($ruta){
-    $data = array();
-    if($handler = fopen($ruta, 'r')){
-        $cabeceras = fgetcsv($handler, 1000, ",");
-        while (($lineData = fgetcsv($handler, 1000, ",")) !== FALSE) {
-            $data[] = array_combine($cabeceras,$lineData);
-        }
-        return $data;
-    }else{
-        return null;
+
+// function getData(){
+//     $db = new PDO("mysql:host=localhost;dbname=crud_mysql", "crud_mysql", "crud_mysql");
+//     return ($db->query('SELECT * FROM usuarios'));
+// }
+
+function conectarBD(){
+    try {
+        $db = new PDO("mysql:host=localhost;dbname=crud_mysql;charset=utf8", "crud_mysql", "crud_mysql");
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        echo "La conexion funciona";
+        return $db; 
+    } catch (PDOException $e) {
+        echo "Error de conexión: " . $e->getMessage();
+        return null; 
     }
-    
 }
 
-function putDataInCSV($data, $ruta){
-    if($handler = fopen($ruta, 'a')){
-        foreach($data as $filaInedx=> $filaData){
-            dump()
-             $resultaado = fputcsv($handler,$filaData);
+
+function getData($source, $db  = '', $ruta = '', $campoId = '' ){
+    if ($source == 'csv'){
+        $data = array();
+        if($handler = fopen($ruta, 'r')){
+            $cabeceras = fgetcsv($handler, 1000, ",");
+            if(!empty($campoId)){
+                $campoIndex = array_search($campoId,$cabeceras);
+            }else{
+                $campoIndex = null;
+            }
+            while (($lineData = fgetcsv($handler, 1000, ",")) !== FALSE) {
+                if(isset($campoIndex)){
+                    // dump($cabeceras);
+                    // dump($lineData);
+                    $data[$lineData[$campoIndex]] = array_combine($cabeceras,$lineData);
+                }else{
+                    $data[] = array_combine($cabeceras,$lineData);
+                }
+            }
+            return $data;
+        }else{
+            return null;
         }
-       return $resultaado;
-    }else{
+    }else if ($source == 'db'){
+        $mostrar = $db->query('SELECT * FROM usuarios');
+        return $mostrar;
+    }
+}
+
+
+
+function insertUser($db){
+if(isset($_POST['crear'])){
+    $userData = filter_input_array(INPUT_POST,[
+        'nombre' => FILTER_DEFAULT,
+        'email' => FILTER_VALIDATE_EMAIL,
+        'rol' => FILTER_DEFAULT
+    ]);
+    
+
+        // Usar prepared statement
+        $stmt = $db->prepare("INSERT INTO usuarios (nombre, email, rol, fecha_alta) VALUES (?, ?, ?, NOW())");
+
+        return $stmt->execute([
+            $userData['nombre'],
+            $userData['email'],
+            $userData['rol']
+        ]);
+}
+}
+
+ 
+
+
+
+
+function getUserById($db, $id) {
+
+    $stmt = $db->prepare("SELECT * FROM usuarios WHERE id = :id");
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($usuario) {
+        return $usuario;
+    } else {
         return null;
     }
 }
+
+
+function updateUser($db, $id, $nombre, $email, $rol) {
+    $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, email = ?, rol = ? WHERE id = ?");
+    
+    return $stmt->execute([$nombre, $email, $rol, $id]);
+}
+
+
+
+
+
+
+
+

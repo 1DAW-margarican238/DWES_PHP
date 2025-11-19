@@ -7,7 +7,10 @@ boot();
 
 //Lógica de negocio
 //Lee CSV
-$usuarios = getDataFromCSV('./data/users.csv');
+$db = conectarBD();
+$usuarios = getData("db", $db);
+dump($usuarios);
+
 
 //Lógica de presentación
 //Presenta el html a partir de los datos en el CSV
