@@ -9,7 +9,7 @@ boot();
 //Lee CSV
 $db = conectarBD();
 $usuarios = getData("db", $db);
-dump($usuarios);
+// dump($usuarios);
 
 
 //Lógica de presentación

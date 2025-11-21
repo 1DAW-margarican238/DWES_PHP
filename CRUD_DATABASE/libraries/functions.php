@@ -18,6 +18,7 @@ function dumpObjectStructure($obj){
         echo "La variable no es un objeto";
     }
 }
+
 function dump($var){
     echo '<pre>'.print_r($var,true).'</pre>';
 }
@@ -37,7 +38,7 @@ function conectarBD(){
     try {
         $db = new PDO("mysql:host=localhost;dbname=crud_mysql;charset=utf8", "crud_mysql", "crud_mysql");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        echo "La conexion funciona";
+       
         return $db; 
     } catch (PDOException $e) {
         echo "Error de conexión: " . $e->getMessage();
@@ -87,9 +88,9 @@ if(isset($_POST['crear'])){
     
 
         // Usar prepared statement
-        $stmt = $db->prepare("INSERT INTO usuarios (nombre, email, rol, fecha_alta) VALUES (?, ?, ?, NOW())");
+        $insert = $db->prepare("INSERT INTO usuarios (nombre, email, rol, fecha_alta) VALUES (?, ?, ?, NOW())");
 
-        return $stmt->execute([
+        return $insert->execute([
             $userData['nombre'],
             $userData['email'],
             $userData['rol']
@@ -98,30 +99,41 @@ if(isset($_POST['crear'])){
 }
 
  
-
-
-
-
 function getUserById($db, $id) {
 
-    $stmt = $db->prepare("SELECT * FROM usuarios WHERE id = :id");
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
+    $get = $db->prepare("SELECT nombre, email, rol FROM usuarios WHERE id = :id");
+    $get->bindParam(':id', $id, PDO::PARAM_INT);
+    $get->execute();
 
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    $usuario = $get->fetch(PDO::FETCH_ASSOC);
     
     if ($usuario) {
         return $usuario;
     } else {
         return null;
     }
+    
 }
+
+
+
 
 
 function updateUser($db, $id, $nombre, $email, $rol) {
-    $stmt = $db->prepare("UPDATE usuarios SET nombre = ?, email = ?, rol = ? WHERE id = ?");
+   $update = $db->prepare("UPDATE usuarios SET nombre = :nombre, email = :email, rol = :rol WHERE id = :id");
+    $update->bindParam("nombre", $nombre, PDO::PARAM_STR);
+    $update->bindParam("email", $email, PDO::PARAM_STR);
+    $update->bindParam("rol", $rol, PDO::PARAM_STR);
+    $update->bindParam("id", $id, PDO::PARAM_INT);
+    $update->execute();
+}
+
+
+function deleteUser($db, $id) {
+    $delete = $db->prepare("DELETE FROM usuarios WHERE id = :id");
+    $delete->bindParam(":id", $id, PDO::PARAM_INT);
+    return $delete->execute();
     
-    return $stmt->execute([$nombre, $email, $rol, $id]);
 }
 
 
@@ -130,4 +142,4 @@ function updateUser($db, $id, $nombre, $email, $rol) {
 
 
 
-
+?>

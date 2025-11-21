@@ -14,7 +14,7 @@
             <th>Nombre</th>
             <th>Email</th>
             <th>Rol</th>
-            <th>Acciones</th>  <!-- Nueva columna para los botones -->
+            <th>Acciones</th> 
         </tr>
         <?php foreach($usuarios as $usuario): ?>  
         <tr>
@@ -22,12 +22,9 @@
             <td><?php echo htmlspecialchars($usuario['email']); ?></td>
             <td><?php echo htmlspecialchars(ucfirst($usuario['rol'])); ?></td>
             <td>
-
-                <a href="edit_user.php?id=<?php echo $usuario['id']; ?>">Editar</a> |
-      
-                <a href="show_user.php?id=<?php echo $usuario['id']; ?>">Ver</a> |
-         
-                <a href="delete_user.php?id=<?php echo $usuario['id']; ?>" onclick="return confirm('¿Estás seguro de eliminar este usuario?');">Eliminar</a>
+                <a href="show_user.php?id=<?php echo $usuario['id']; ?>">Ver</a>
+                <a href="edit_user.php?id=<?php echo $usuario['id']; ?>">Editar</a> 
+                <a href="delete_user.php?id=<?php echo $usuario['id']; ?>">Eliminar</a>
             </td>
         </tr>
         <?php endforeach; ?>   

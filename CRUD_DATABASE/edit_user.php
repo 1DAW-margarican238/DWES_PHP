@@ -7,10 +7,13 @@ boot();
 
 //Lógica de negocio
 //Obtenemos id de la querystring
-$id = filter_input(INPUT_GET,'id', FILTER_VALIDATE_INT);
+
+$db = conectarBD();
+$id = $_SERVER["REQUEST_METHOD"] === "GET" ? filter_input(INPUT_GET,'id', FILTER_VALIDATE_INT) : intval($_POST["id"]);
+$usuario = getUserById($db, $id);
 
 if ($id !== false) {
-    $db = conectarBD();
+    
 
     if (isset($_POST['actualizar'])) {
         $userData = filter_input_array(INPUT_POST, [
@@ -19,24 +22,20 @@ if ($id !== false) {
             'rol' => FILTER_DEFAULT
         ]);
 
-         var_dump($userData);
+        var_dump($userData);
 
         if (!empty($userData['nombre']) && !empty($userData['email']) && !empty($userData['rol'])) {
             updateUser($db, $id, $userData['nombre'], $userData['email'], $userData['rol']);
         }
+        header("Location: ./index_user.php");
+
     }
 
-    $usuario = getUserById($db, $id);
-    if ($usuario === null) {
-        header("Location: ./index_user.php");
-        exit;
-    }
+    
 } else {
     header("Location: ./index_user.php");
-    exit;
 }
 
 //Lógica de presentación
-//Presenta el html a partir de los datos en el CSV
 include_once('./templates/edit_user.tpl.php');
 ?>
